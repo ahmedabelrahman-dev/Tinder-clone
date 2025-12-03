@@ -1,20 +1,20 @@
 import { useState } from 'react';
-// import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from '../store/useAuthStore';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // const { login, loading } = useAuthStore();
-  const loading = false;
+  const { login, loading } = useAuthStore();
+  // const loading = false;
 
   return (
     <form
       className="space-y-6"
       onSubmit={(e) => {
         e.preventDefault();
-        // login({ email, password });
-        console.log({ email, password });
+        login({ email, password });
+        // console.log({ email, password });
       }}
     >
       <div>
