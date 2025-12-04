@@ -14,7 +14,8 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-app.use(express.json());
+// add a bigger limit to handle large profile pictures
+app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
