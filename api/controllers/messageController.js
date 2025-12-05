@@ -1,5 +1,5 @@
 import Message from '../models/Message.js';
-// import { getConnectedUsers, getIO } from "../socket/socket.server.js";
+import { getConnectedUsers, getIO } from '../socket/socket.server.js';
 
 export const sendMessage = async (req, res) => {
   try {
@@ -10,16 +10,16 @@ export const sendMessage = async (req, res) => {
       receiver: receiverId,
       content,
     });
-    //TODO: Emit real-time event to receiver using Socket.io
-    // const io = getIO();
-    // const connectedUsers = getConnectedUsers();
-    // const receiverSocketId = connectedUsers.get(receiverId);
 
-    // if (receiverSocketId) {
-    //   io.to(receiverSocketId).emit('newMessage', {
-    //     message: newMessage,
-    //   });
-    // }
+    const io = getIO();
+    const connectedUsers = getConnectedUsers();
+    const receiverSocketId = connectedUsers.get(receiverId);
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit('newMessage', {
+        message: newMessage,
+      });
+    }
 
     res.status(201).json({
       success: true,
@@ -33,6 +33,7 @@ export const sendMessage = async (req, res) => {
     });
   }
 };
+
 export const getConversation = async (req, res) => {
   const { userId } = req.params;
   try {
