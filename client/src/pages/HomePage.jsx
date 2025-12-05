@@ -9,8 +9,13 @@ import SwipeFeedback from '../components/SwipeFeedback';
 import { useAuthStore } from '../store/useAuthStore';
 
 const HomePage = () => {
-  const { isLoadingUserProfiles, getUserProfiles, userProfiles } =
-    useMatchStore();
+  const {
+    isLoadingUserProfiles,
+    getUserProfiles,
+    userProfiles,
+    subscribeToNewMatches,
+    unsubscribeFromNewMatches,
+  } = useMatchStore();
 
   const { authUser } = useAuthStore();
   console.log('Auth User in HomePage:', authUser);
@@ -19,13 +24,13 @@ const HomePage = () => {
     getUserProfiles();
   }, [getUserProfiles]);
 
-  // useEffect(() => {
-  // 	authUser && subscribeToNewMatches();
+  useEffect(() => {
+    authUser && subscribeToNewMatches();
 
-  // 	return () => {
-  // 		unsubscribeFromNewMatches();
-  // 	};
-  // }, [subscribeToNewMatches, unsubscribeFromNewMatches, authUser]);
+    return () => {
+      unsubscribeFromNewMatches();
+    };
+  }, [subscribeToNewMatches, unsubscribeFromNewMatches, authUser]);
 
   return (
     <div
