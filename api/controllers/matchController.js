@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import { getConnectedUsers, getIO } from '../socket/socket.server.js';
 
 export const swipeRight = async (req, res) => {
   try {
@@ -24,29 +25,28 @@ export const swipeRight = async (req, res) => {
 
         await Promise.all([await currentUser.save(), await likedUser.save()]);
 
-        //TODO: implement socket.io to notify users of a new match
         // send notification in real-time with socket.io
-        // const connectedUsers = getConnectedUsers();
-        // const io = getIO();
+        const connectedUsers = getConnectedUsers();
+        const io = getIO();
 
-        // const likedUserSocketId = connectedUsers.get(likedUserId);
+        const likedUserSocketId = connectedUsers.get(likedUserId);
 
-        // if (likedUserSocketId) {
-        // 	io.to(likedUserSocketId).emit("newMatch", {
-        // 		_id: currentUser._id,
-        // 		name: currentUser.name,
-        // 		image: currentUser.image,
-        // 	});
-        // }
+        if (likedUserSocketId) {
+          io.to(likedUserSocketId).emit('newMatch', {
+            _id: currentUser._id,
+            name: currentUser.name,
+            image: currentUser.image,
+          });
+        }
 
-        // const currentSocketId = connectedUsers.get(currentUser._id.toString());
-        // if (currentSocketId) {
-        // 	io.to(currentSocketId).emit("newMatch", {
-        // 		_id: likedUser._id,
-        // 		name: likedUser.name,
-        // 		image: likedUser.image,
-        // 	});
-        // }
+        const currentSocketId = connectedUsers.get(currentUser._id.toString());
+        if (currentSocketId) {
+          io.to(currentSocketId).emit('newMatch', {
+            _id: likedUser._id,
+            name: likedUser.name,
+            image: likedUser.image,
+          });
+        }
       }
     }
 
@@ -63,6 +63,7 @@ export const swipeRight = async (req, res) => {
     });
   }
 };
+
 export const swipeLeft = async (req, res) => {
   try {
     const { dislikedUserId } = req.params;
